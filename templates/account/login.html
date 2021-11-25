@@ -1,0 +1,48 @@
+{% extends "account/base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="col-md-12">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-lg-7  mx-auto">
+
+                                <form class="form-group account-form p-4 rounded col-lg-10 mx-auto" action={% url 'accounts:login' %} method="post">
+                                {% csrf_token %}
+                                <h3 class="mb-2 fw-bold pb-2">Login</h3>
+
+
+
+                                {{ form.username}}
+
+
+                                {{ form.password}}
+
+                                <div class="d-grid gap-2">
+                                    <input type="hidden" name="next" value="{{ next }}">
+                                    <button class="btn btn-dark py-2 mb-4 mt-5 fw-bold" type="submit" value="Login">
+                                    Login
+                                    </button>
+                                </div>
+
+                                <p class="text-center pb-3">
+                                Don't have an account?
+                                    <a href="{% url "accounts:register" %}">Create one here</a>
+                                </p>
+                                </form>
+
+                            <p class="small text-center pt-4">
+                             <a href="{% url "password_reset" %}">Forgotten Password?</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
