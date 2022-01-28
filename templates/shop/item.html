@@ -23,25 +23,18 @@
                     <div class="col">
                         <div class="row p-3">
                             <div class="col-6">
-									<div class="quantity">
-									    <input
-									    type="number"
-									    id="quantity"
-									    class="input-text qty text"
-									    step="1"
-									    min="1"
-									    max="187"
-									    name="qty"
-									    value="1"
-									    title="Qty"
-									    size="4"
-									    placeholder=""
-									    inputmode="numeric" />
-									</div>
+                   <div class="">
+                                <label for="select">Qty</label>
+                                <select id="select" class="h6" style="width:50px;height:40px;">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                    </div>
 							</div>
-							<div class="col-6 text-end"><a href="{% url 'cart:basket' %}"><button type="button" value ="{{ product.id }}"class="btn btn-secondary btn-other btn-sm" type="submit" >
-                                Add to Cart</button></a></div>
-                        </div>
+							<div class="col-6 text-end"><a href="{% url 'cart:basket' %}"><button class="btn btn-secondary btn-other btn-sm" >
+                                Add to Cart</button></a> </div>
                     </div>
                 </div>
             </div>
@@ -50,10 +43,26 @@
             <button class="btn btn-other text-white mt-3" >Go Back</button>
         </a>
     </main>
-
 </div>
-
 </section>
-
+<script>
+    $(document).on('click', '#add-button', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "cart:basket" %}',
+            data: {
+                productid: $('#add-button').val(),
+                productqty: $('#select option:selected').text(),
+                csrfmiddlewaretoken: "{{csrf_token}}",
+                action: 'post'
+            },
+            success: function (json) {
+              document.getElementById("basket-qty").innerHTML = json.qty
+            },
+            error: function (xhr, errmsg, err) {}
+        });
+    })
+</script>
 
 {% endblock %}

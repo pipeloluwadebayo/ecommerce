@@ -50,6 +50,11 @@ class Product(models.Model):
     def __str__(self):
         return self.title
 
+    def get_add_to_cart_url(self):
+        return reverse("shop:item_detail", kwargs={
+            'slug': self.slug
+        })
+
     @staticmethod
     def get_products_by_id(ids):
         return Product.objects.filter (id__in=ids)

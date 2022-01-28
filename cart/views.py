@@ -1,9 +1,12 @@
-from django.shortcuts import render , redirect, HttpResponseRedirect
+from django.shortcuts import render , redirect, HttpResponseRedirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.views import  View
 from shop.models import Product, Category
 from django.http import HttpResponse
-from .models import Order
+from .models import Order, OrderItem
+from django.contrib import messages
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -28,14 +31,14 @@ class CheckOut(View):
     def post(self, request):
         address = request.POST.get('address')
         phone = request.POST.get('phone')
-        customer = request.session.get('customer')
+        user = request.session.get('user')
         cart = request.session.get('cart')
         products = Product.get_products_by_id(list(cart.keys()))
-        print(address, phone, customer, cart, products)
+        print(address, phone, user, cart, products)
 
         for product in products:
             print(cart.get(str(product.id)))
-            order = Order(customer=User(id=customer),
+            order = Order(user=User(id=user),
                           product=product,
                           price=product.price,
                           address=address,
@@ -80,9 +83,9 @@ class Index(View):
         return render(request , 'orders/index.html')
 
 def store(request):
-    cart = request.session.get('cart')
-    if not cart:
-        request.session['cart'] = {}
+    # cart = request.session.get('cart')
+    # if not cart:
+    #     request.session['cart'] = {}
     products = None
     categories = Category.get_all_categories()
     categoryID = request.GET.get('category')
@@ -98,11 +101,31 @@ def store(request):
     print('you are : ', request.session.get('email'))
     return render(request, 'shop/home.html', data)
 
-class OrderView(View):
-
-
-    def get(self , request ):
-        customer = request.session.get('customer')
-        orders = Order.get_orders_by_customer(customer)
-        print(orders)
-        return render(request , 'orders/orders.html'  , {'orders' : orders})
+@login_required
+def add_to_cart(request, slug):
+    item = get_object_or_404(Product, slug=slug)
+    order_item, created = OrderItem.objects.get_or_create(
+        item=item,
+        user=request.user,
+        ordered=False
+    )
+    order_qs = Order.objects.filter(user=request.user, ordered=False)
+    if order_qs.exists():
+        order = order_qs[0]
+        # check if the order item is in the order
+        if order.items.filter(item__slug=item.slug).exists():
+            order_item.quantity += 1
+            order_item.save()
+            messages.info(request, "This item quantity was updated.")
+            return redirect("shop:item_detail")
+        else:
+            order.items.add(order_item)
+            messages.info(request, "This item was added to your cart.")
+            return redirect("shop:item_detail")
+    else:
+        ordered_date = timezone.now()
+        order = Order.objects.create(
+            user=request.user, ordered_date=ordered_date)
+        order.items.add(order_item)
+        messages.info(request, "This item was added to your cart.")
+        return redirect("shop:item_detail")

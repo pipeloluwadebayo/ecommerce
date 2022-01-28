@@ -62,24 +62,24 @@ def categories(request):
     return{
         'categories': Category.objects.all()
     }
-def basket(request):
-    cart = request.session.get('cart')
-    if not cart:
-        request.session['cart'] = {}
-    products = None
-    categories = Category.get_all_categories()
-    categoryID = request.GET.get('category')
-    if categoryID:
-        products = Product.get_all_products_by_categoryid(categoryID)
-    else:
-        products = Product.get_all_products();
+# def basket(request):
+#     cart = request.session.get('cart')
+#     if not cart:
+#         request.session['cart'] = {}
+#     products = None
+#     categories = Category.get_all_categories()
+#     categoryID = request.GET.get('category')
+#     if categoryID:
+#         products = Product.get_all_products_by_categoryid(categoryID)
+#     else:
+#         products = Product.get_all_products();
 
-    data = {}
-    data['products'] = products
-    data['categories'] = categories
+    # data = {}
+    # data['products'] = products
+    # data['categories'] = categories
 
-    print('you are : ', request.session.get('email'))
-    return render(request, 'shop/home.html', data)
+    # print('you are : ', request.session.get('email'))
+    # return render(request, 'shop/home.html', data)
 
 
 def item_detail(request, slug):
