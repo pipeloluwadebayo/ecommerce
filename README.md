@@ -1,2 +1,2 @@
 # ecommerce
-pipeloluwadebayo.pythonanywhere.com
+https://pipeloluwadebayo.pythonanywhere.com
