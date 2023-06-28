@@ -1,8 +1,7 @@
 # An ecommerce website template
 created with Python, Django and bootstrap
 
-
-# [Website](pipeloluwadebayo.pythonanywhere.com)
+(pipeloluwadebayo.pythonanywhere.com)
 
 ![pipstore ](https://user-images.githubusercontent.com/81034876/174474751-6e644484-0b75-4baa-b701-ff68a9fae306.png)
 
